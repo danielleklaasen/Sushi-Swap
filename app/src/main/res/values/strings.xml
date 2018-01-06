@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Sushi Roll</string>
+    <string name="instruction_text">Shake it!</string>
+    <string name="main_image_description">Sushi cartoon</string>
 </resources>
