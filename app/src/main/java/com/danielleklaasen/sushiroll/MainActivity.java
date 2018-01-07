@@ -34,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     // sushi drawables
     private int numSushiDrawables = 0;
     private int sushiTagNr;
+    ImageView imageView;
+    private final String SUSHI_PREFIX = "sushi";
 
     // confirmation text array
     String confirmationText[] = {
@@ -56,7 +58,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         senSensorManager.registerListener(this, senAccelerometer , SensorManager.SENSOR_DELAY_NORMAL); // deliver sensor events at normal rate (last arg)
 
         // find out how many sushi drawables there are in the resource folder
-        numSushiDrawables = getNumDrawable("sushi");
+        numSushiDrawables = getNumDrawable(SUSHI_PREFIX);
+
+        imageView = (ImageView)findViewById(R.id.main_image); // access image
+        String sushiTag = (String) imageView.getTag(); // see which sushi nr it is
+        sushiTagNr = Integer.parseInt(sushiTag); // set current tag nr sushi drawable
     }
 
     // two required SensorEventListener methods (implemented in this class)
@@ -111,11 +117,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public void replaceSushi(){
         if(curTime - timeImageUpdated > 1000){ // update picture, only if not updated in the last second
-            ImageView imageView = (ImageView)findViewById(R.id.main_image); // access image
-
             String sushiTag = (String) imageView.getTag(); // see which sushi nr it is
-            int sushiTagNr = Integer.parseInt(sushiTag);
-
+            sushiTagNr = Integer.parseInt(sushiTag);
             Random rand = new Random();
             int  n = rand.nextInt(numSushiDrawables) + 1; // range 1 - number of sushi drawables
 
@@ -157,11 +160,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // add current timestamp
         curTime = System.currentTimeMillis();
 
-        // get current sushi nr
-        // make global var sushiNr
+        // send current sushi
+        String currentSushi = SUSHI_PREFIX + Integer.toString(sushiTagNr);
 
-        // get boolean sunglasses
-        // global var sunglassesbool
+        // send boolean sunglasses
+        // global var:
 
         // getting random confirmation text from array and show user feedback (toast)
         Random rand = new Random();
