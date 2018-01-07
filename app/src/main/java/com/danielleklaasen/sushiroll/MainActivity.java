@@ -17,7 +17,6 @@ import java.util.Random;
 import java.lang.reflect.Field;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener { // setting sensor event listener here
-
     // sensors
     private SensorManager senSensorManager;
     private Sensor senAccelerometer;
@@ -47,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             "Rice to meet you",
             "Miso hungry"
     };
+    int lastConfirmationText = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,8 +192,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Random rand = new Random();
         final int min = 0;
         final int max = confirmationText.length-1;
-        final int random = rand.nextInt((max - min) + 1) + min;
+        int random = rand.nextInt((max - min) + 1) + min;
+
+        // making sure new text != repeating old text
+        for (int i = 0; i < max;i++){
+            if(random != lastConfirmationText){
+                break;
+            }
+            random = rand.nextInt((max - min) + 1) + min;
+        }
         String message = confirmationText[random];
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        lastConfirmationText = random;
     }
 }
