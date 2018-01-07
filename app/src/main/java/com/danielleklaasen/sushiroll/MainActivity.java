@@ -32,13 +32,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private float last_x, last_y, last_z;
     private static final int SHAKE_THRESHOLD = 1200;
 
-    // sushi drawables
+    // sushi variables
     private int numSushiDrawables = 0;
     private int sushiTagNr;
     ImageView imageView;
     ImageView sunglasses;
-
     private final String SUSHI_PREFIX = "sushi";
+    Boolean sunglassesOn = true;
 
     // confirmation text array
     String confirmationText[] = {
@@ -110,8 +110,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             float lightValue = event.values[0]; // retrieve light value from sensor
 
             if (lightValue<15){
+                sunglassesOn = false;
                 sunglasses.setVisibility(View.INVISIBLE);
             } else {
+                sunglassesOn = true;
                 sunglasses.setVisibility(View.VISIBLE);
             }
         }
@@ -183,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         String currentSushi = SUSHI_PREFIX + Integer.toString(sushiTagNr);
 
         // send boolean sunglasses
-        // global var:
+        // global var: sunglassesOn
 
         // getting random confirmation text from array and show user feedback (toast)
         Random rand = new Random();
