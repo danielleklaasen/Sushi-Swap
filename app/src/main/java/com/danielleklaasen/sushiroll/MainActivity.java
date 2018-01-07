@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     // sensors
     private SensorManager senSensorManager;
     private Sensor senAccelerometer;
+    private Sensor senLight;
 
     // timing
     private long lastUpdate = 0;
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private int numSushiDrawables = 0;
     private int sushiTagNr;
     ImageView imageView;
+    ImageView sunglasses;
+
     private final String SUSHI_PREFIX = "sushi";
 
     // confirmation text array
@@ -50,17 +53,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // initialize the Accelerometer variables
+        // SENSOR SETUP
         senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE); // used to access the system's sensors
-        senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER); // reference to system's accelerometer
 
-        // register accelerometer listener
-        senSensorManager.registerListener(this, senAccelerometer , SensorManager.SENSOR_DELAY_NORMAL); // deliver sensor events at normal rate (last arg)
+        // initialize the Accelerometer variables
+        senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER); // reference to system's accelerometer
+        senSensorManager.registerListener(this, senAccelerometer , SensorManager.SENSOR_DELAY_NORMAL); // accelerometer listener: deliver sensor events at normal rate (last arg)
+
+        // light sensor variables
+        senLight = senSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT); // reference to system's light sensor
+        senSensorManager.registerListener(this, senLight, SensorManager.SENSOR_DELAY_NORMAL);
 
         // find out how many sushi drawables there are in the resource folder
         numSushiDrawables = getNumDrawable(SUSHI_PREFIX);
 
+        // fill variables with sushi info
         imageView = (ImageView)findViewById(R.id.main_image); // access image
+        sunglasses = (ImageView)findViewById(R.id.sunglasses); // access sunglasses
         String sushiTag = (String) imageView.getTag(); // see which sushi nr it is
         sushiTagNr = Integer.parseInt(sushiTag); // set current tag nr sushi drawable
     }
@@ -94,6 +103,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 last_x = x;
                 last_y = y;
                 last_z = z;
+            }
+        }
+
+        if (mySensor.getType() == Sensor.TYPE_LIGHT) { // check for light sensor
+            float lightValue = event.values[0]; // retrieve light value from sensor
+
+            if (lightValue<15){
+                sunglasses.setVisibility(View.INVISIBLE);
+            } else {
+                sunglasses.setVisibility(View.VISIBLE);
             }
         }
     }
