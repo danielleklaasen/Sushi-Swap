@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
+    android:gravity="center_vertical"
     tools:context="com.danielleklaasen.sushiroll.MainActivity">
 
     <TextView
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_below="@id/main_text"
-
+        android:paddingBottom="60dp"
         />
     <ImageView
         android:id="@+id/sunglasses"
@@ -37,5 +37,23 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_below="@id/main_text"
+        android:paddingBottom="60dp"
+        />
+    <Button
+        android:id="@+id/button_save"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/save_button_text"
+
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:background="@color/secondaryColor"
+        android:textColor="@color/secondaryTextColor"
+        android:paddingHorizontal="50dp"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        android:drawableStart="@drawable/ic_save_white_24dp"
+        android:drawableLeft="@drawable/ic_save_white_24dp"
+        android:drawablePadding="15dp"
         />
 </RelativeLayout>

@@ -2,4 +2,5 @@
     <string name="app_name">Sushi Swap</string>
     <string name="instruction_text">Shake it!</string>
     <string name="main_image_description">Sushi cartoon</string>
+    <string name="save_button_text">Save your sushi</string>
 </resources>
