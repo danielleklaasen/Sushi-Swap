@@ -132,8 +132,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     protected void onResume() {
         super.onResume();
-        // register the sensor again when the application resumes
+        // register the sensors again when the application resumes
         senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        senSensorManager.registerListener(this, senLight, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     public void replaceSushi(){
