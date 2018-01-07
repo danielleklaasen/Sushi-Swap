@@ -37,6 +37,5 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_below="@id/main_text"
-
         />
 </RelativeLayout>

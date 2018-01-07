@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z)/ diffTime * 10000; // calculate how quick the axis changed
 
                 if (speed > SHAKE_THRESHOLD) {
-                    // SHAKE GESTURE RECOGNIZED 
+                    // SHAKE GESTURE RECOGNIZED
                     replaceSushi();
                 }
 
