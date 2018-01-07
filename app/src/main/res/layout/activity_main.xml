@@ -55,5 +55,6 @@
         android:drawableStart="@drawable/ic_save_white_24dp"
         android:drawableLeft="@drawable/ic_save_white_24dp"
         android:drawablePadding="15dp"
+        android:onClick="onClickSaveBtn"
         />
 </RelativeLayout>

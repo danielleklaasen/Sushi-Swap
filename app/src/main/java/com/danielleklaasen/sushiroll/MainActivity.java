@@ -9,7 +9,10 @@ import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
+
 import java.util.Random;
 import java.lang.reflect.Field;
 
@@ -30,6 +33,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     // sushi drawables
     private int numSushiDrawables = 0;
+    private int sushiTagNr;
+
+    // confirmation text array
+    String confirmationText[] = {
+            "Sashimi Rollin’.. They Hatin’..",
+            "You make miso happy",
+            "Rice to meet you",
+            "Miso hungry"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,5 +152,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         }
         return num;
+    }
+    public void onClickSaveBtn(View v) {
+        // add current timestamp
+        curTime = System.currentTimeMillis();
+
+        // get current sushi nr
+        // make global var sushiNr
+
+        // get boolean sunglasses
+        // global var sunglassesbool
+
+        // getting random confirmation text from array and show user feedback (toast)
+        Random rand = new Random();
+        final int min = 0;
+        final int max = confirmationText.length-1;
+        final int random = rand.nextInt((max - min) + 1) + min;
+        String message = confirmationText[random];
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }
