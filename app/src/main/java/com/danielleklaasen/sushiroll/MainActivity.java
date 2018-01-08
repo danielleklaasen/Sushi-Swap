@@ -19,8 +19,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             "Rice to meet you",
             "Miso hungry"
     };
-    int lastConfirmationText = 3;
+    int lastConfirmationText;
 
     // db
     FirebaseDatabase database;
@@ -160,8 +158,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public void replaceSushi(){
         if(curTime - timeImageUpdated > 1000){ // update picture, only if not updated in the last second
-            String sushiTag = (String) imageView.getTag(); // see which sushi nr it is
-            sushiTagNr = Integer.parseInt(sushiTag);
             Random rand = new Random();
             int  n = rand.nextInt(numSushiDrawables) + 1; // range 1 - number of sushi drawables
 
@@ -174,12 +170,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
 
             String uri = "@drawable/sushi"+n; // make new sushi drawable
+            sushiTagNr = n; // update nr
 
             int imageResource = getResources().getIdentifier(uri, null, getPackageName());
             Drawable res = getResources().getDrawable(imageResource);
             imageView.setImageDrawable(res); // assign drawable to imageview
-
-            imageView.setTag(Integer.toString(n));
 
             timeImageUpdated = curTime; // update time
         }
@@ -202,14 +197,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void onClickSaveBtn(View v) {
         // retrieving data to send
         String uniqueID = UUID.randomUUID().toString(); // create unique ID
-        curTime = System.currentTimeMillis(); // setup current timestamp
-        String currentTime = Long.toString(curTime);
         String currentSushi = SUSHI_PREFIX + Integer.toString(sushiTagNr); // current sushi
         String strSunglassesOn = String.valueOf(sunglassesOn); // boolean sunglasses
 
         if(saveToDB(uniqueID, currentSushi, strSunglassesOn)){
             confirmToUser();
-           // updateTextFromDB();
         }
 
     }
@@ -224,6 +216,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         myRef.setValue(sushiMap); // send data to db
 
+        /*
+        {
+            uniqueID: {
+                "sushi": currentSushi,
+                "sunglasses": strSunglassesOn,
+            }
+        }
+
+         */
+
         return true;
     }
     private void confirmToUser(){
@@ -234,12 +236,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         int random = rand.nextInt((max - min) + 1) + min;
 
         // making sure new text != repeating old text
-        for (int i = 0; i < max;i++){
-            if(random != lastConfirmationText){
-                break;
+        if(confirmationText!=null){
+            for (int i = 0; i < max;i++){
+                if(random != lastConfirmationText){
+                    break;
+                }
+                random = rand.nextInt((max - min) + 1) + min;
             }
-            random = rand.nextInt((max - min) + 1) + min;
         }
+
         String message = confirmationText[random];
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         lastConfirmationText = random;
