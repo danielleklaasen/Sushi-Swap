@@ -1,3 +1,5 @@
+// File: MainActivity.java
+// Class with 2 sensor implementations saving data to Firebase
 package com.danielleklaasen.sushiroll;
 
 import android.content.Context;
@@ -26,6 +28,11 @@ import java.util.Random;
 import java.lang.reflect.Field;
 import java.util.UUID;
 
+/**
+ * This is a the Main Activity class implementing the SensorEvenListener to work with light sensor and accelerometer
+ * @see android.hardware.SensorEventListener
+ * @author Danielle Klaasen
+ */
 public class MainActivity extends AppCompatActivity implements SensorEventListener { // setting sensor event listener here
     // sensors
     private SensorManager senSensorManager;
@@ -50,18 +57,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Boolean sunglassesOn = true;
     TextView sushiTextView;
 
-    // confirmation text array
+    // Array holding confirmation text variations
     String confirmationText[] = {
-            "Sashimi Rollin’.. They Hatin’..",
-            "You make miso happy",
-            "Rice to meet you",
-            "Miso hungry"
+            "You make miso happy.",
+            "Sashimi Rollin.. They Hatin..",
+            "Miso hungry.",
+            "Rice to meet you."
     };
     int lastConfirmationText;
 
     // db
     FirebaseDatabase database;
-
+    /**
+     * onCreate method to gain access to the system's sensors and set listeners to changes. Also, getting an instance of Firebase database and set listener for Data changes.
+     *
+     * @see #onSensorChanged(SensorEvent)
+     * @see #DBlistener()
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +106,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     // two required SensorEventListener methods (implemented in this class)
+    /**
+     * Method to detect changes in the sensor
+     * @param event is the sensor event
+     * */
     @Override
     public void onSensorChanged(SensorEvent event) { // to detect a change in the sensor
         Sensor mySensor = event.sensor;
@@ -143,19 +159,27 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
+    /**
+     * Unregisters the sensors stored in senSensorManager, on pause.
+     */
     protected void onPause() {
         super.onPause();
-        // good practice to unregister the sensor on pause
         senSensorManager.unregisterListener(this);
     }
 
+    /**
+     * Registers the light sensor + accelerometer again when the application resumes.
+     */
     protected void onResume() {
         super.onResume();
-        // register the sensors again when the application resumes
         senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         senSensorManager.registerListener(this, senLight, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
+    /**
+     * Replaces a sushi cartoon randomly from drawables starting with defined prefix.
+     * @see #SUSHI_PREFIX
+     */
     public void replaceSushi(){
         if(curTime - timeImageUpdated > 1000){ // update picture, only if not updated in the last second
             Random rand = new Random();
@@ -169,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 n = rand.nextInt(numSushiDrawables) + 1;
             }
 
-            String uri = "@drawable/sushi"+n; // make new sushi drawable
+            String uri = "@drawable/"+SUSHI_PREFIX+n; // make new sushi drawable
             sushiTagNr = n; // update nr
 
             int imageResource = getResources().getIdentifier(uri, null, getPackageName());
@@ -180,6 +204,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
+    /**
+     * Returns number of drawables starting with a specific string.
+     * @param string to check for drawables starting with given string
+     * @return number of drawables
+     */
     public int getNumDrawable(String string){
         int num = 0;
         Field[] drawables = R.drawable.class.getFields();
@@ -194,6 +223,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         return num;
     }
+
+    /**
+     * On click function for the save button.
+     * @param v takes the view which was pressed
+     */
     public void onClickSaveBtn(View v) {
         // retrieving data to send
         String uniqueID = UUID.randomUUID().toString(); // create unique ID
@@ -205,6 +239,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
     }
+
+    /**
+     * Saving to firebase database.
+     * @param uniqueID
+     * @param currentSushi the sushi drawable on screen
+     * @param strSunglassesOn
+     * @return true if successful
+     */
     private Boolean saveToDB(String uniqueID, String currentSushi, String strSunglassesOn){
         // create child with unique id
         DatabaseReference myRef = database.getReference(uniqueID);
@@ -216,18 +258,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         myRef.setValue(sushiMap); // send data to db
 
-        /*
-        {
-            uniqueID: {
-                "sushi": currentSushi,
-                "sunglasses": strSunglassesOn,
-            }
-        }
-
-         */
-
         return true;
     }
+
+    /**
+     * Show random confirmation text to user, different from previous one.
+     */
     private void confirmToUser(){
         // getting random confirmation text from array and show user feedback (toast)
         Random rand = new Random();
@@ -249,6 +285,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         lastConfirmationText = random;
     }
+
+    /**
+     * Listens to changes in the database.
+     */
     private void DBlistener(){
         // DB
         DatabaseReference myRef = database.getReference();
@@ -285,6 +325,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
            }
        });
     }
+
+    /**
+     * Method to update text with data from Firebase database
+     * @param sushi the sushi drawable which is saved
+     * @param sunglasses to define if the sunglasses are on or off
+     */
     public void updateText(String sushi, String sunglasses){
         String content = "Sushi: " + sushi + ". Sunglasses: " + sunglasses + ".";
         sushiTextView.setText(content);
