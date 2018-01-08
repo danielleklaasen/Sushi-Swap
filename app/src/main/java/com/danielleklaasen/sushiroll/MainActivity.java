@@ -13,8 +13,17 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.lang.reflect.Field;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener { // setting sensor event listener here
     // sensors
@@ -179,15 +188,34 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         return num;
     }
     public void onClickSaveBtn(View v) {
-        // add current timestamp
-        curTime = System.currentTimeMillis();
+        // retrieving data to send
+        String uniqueID = UUID.randomUUID().toString(); // create unique ID
+        curTime = System.currentTimeMillis(); // setup current timestamp
+        String currentTime = Long.toString(curTime);
+        String currentSushi = SUSHI_PREFIX + Integer.toString(sushiTagNr); // current sushi
+        String strSunglassesOn = String.valueOf(sunglassesOn); // boolean sunglasses
 
-        // send current sushi
-        String currentSushi = SUSHI_PREFIX + Integer.toString(sushiTagNr);
+        if(saveToDB(uniqueID, currentSushi, strSunglassesOn)){
+            confirmToUser();
+            //updateTextFromDB(uniqueID);
+        }
 
-        // send boolean sunglasses
-        // global var: sunglassesOn
+    }
+    private Boolean saveToDB(String uniqueID, String currentSushi, String strSunglassesOn){
+        // DB
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference(uniqueID);
 
+        // filling map with data
+        Map<String,Object> sushiMap = new HashMap<>();
+        sushiMap.put("sushi", currentSushi);
+        sushiMap.put("sunglasses", strSunglassesOn);
+
+        myRef.setValue(sushiMap); // send data to db
+
+        return true;
+    }
+    private void confirmToUser(){
         // getting random confirmation text from array and show user feedback (toast)
         Random rand = new Random();
         final int min = 0;
@@ -204,5 +232,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         String message = confirmationText[random];
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         lastConfirmationText = random;
+    }
+    private void updateTextFromDB(String uniqueID){
+        // DB
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference(uniqueID);
+        // Read from the database
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = dataSnapshot.getValue(String.class);
+                Log.d("debug", "Value is: " + value);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w("debug", "Failed to read value.", error.toException());
+            }
+        });
     }
 }

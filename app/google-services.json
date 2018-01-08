@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "333143310353",
+    "firebase_url": "https://myapplication-17e69.firebaseio.com",
+    "project_id": "myapplication-17e69",
+    "storage_bucket": "myapplication-17e69.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:333143310353:android:004b1cc746b18309",
+        "android_client_info": {
+          "package_name": "com.danielleklaasen.sushiroll"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "333143310353-ej530pi50uiinlijdu649rt2sls11f2r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.danielleklaasen.sushiroll",
+            "certificate_hash": "34a46bcee07765c1f2c05376adb24c5ead262d20"
+          }
+        },
+        {
+          "client_id": "333143310353-mm8uu7i7l6j44a9igcuhjrlsg9cpbjbh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpMfl_rM_ScPpiF3QZyr1hjOYnpxGKqLs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "333143310353-mm8uu7i7l6j44a9igcuhjrlsg9cpbjbh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
