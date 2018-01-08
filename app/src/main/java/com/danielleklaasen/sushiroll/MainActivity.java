@@ -11,12 +11,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
@@ -47,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     ImageView sunglasses;
     private final String SUSHI_PREFIX = "sushi";
     Boolean sunglassesOn = true;
+    TextView sushiTextView;
 
     // confirmation text array
     String confirmationText[] = {
@@ -56,6 +60,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             "Miso hungry"
     };
     int lastConfirmationText = 3;
+
+    // db
+    FirebaseDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +88,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         sunglasses = (ImageView)findViewById(R.id.sunglasses); // access sunglasses
         String sushiTag = (String) imageView.getTag(); // see which sushi nr it is
         sushiTagNr = Integer.parseInt(sushiTag); // set current tag nr sushi drawable
+        sushiTextView = (TextView)findViewById(R.id.latest_sushi); // text view with info from db
+
+        // set db listener to update text
+        database = FirebaseDatabase.getInstance();
+        DBlistener();
     }
 
     // two required SensorEventListener methods (implemented in this class)
@@ -197,13 +209,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         if(saveToDB(uniqueID, currentSushi, strSunglassesOn)){
             confirmToUser();
-            //updateTextFromDB(uniqueID);
+           // updateTextFromDB();
         }
 
     }
     private Boolean saveToDB(String uniqueID, String currentSushi, String strSunglassesOn){
-        // DB
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        // create child with unique id
         DatabaseReference myRef = database.getReference(uniqueID);
 
         // filling map with data
@@ -233,25 +244,44 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         lastConfirmationText = random;
     }
-    private void updateTextFromDB(String uniqueID){
+    private void DBlistener(){
         // DB
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference(uniqueID);
-        // Read from the database
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                Log.d("debug", "Value is: " + value);
-            }
+        DatabaseReference myRef = database.getReference();
 
-            @Override
-            public void onCancelled(DatabaseError error) {
+        // Read from the database
+       myRef.addChildEventListener(new ChildEventListener() {
+           @Override
+           public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+               String sushi = dataSnapshot.child("sushi").getValue().toString();
+               String sunglasses = dataSnapshot.child("sunglasses").getValue().toString();
+
+               updateText(sushi, sunglasses);
+           }
+
+           @Override
+           public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+           }
+
+           @Override
+           public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+           }
+
+           @Override
+           public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+           }
+
+           @Override
+           public void onCancelled(DatabaseError databaseError) {
                 // Failed to read value
-                Log.w("debug", "Failed to read value.", error.toException());
-            }
-        });
+               Log.w("db", "Failed to read value.", databaseError.toException());
+           }
+       });
+    }
+    public void updateText(String sushi, String sunglasses){
+        String content = "Sushi: " + sushi + ". Sunglasses: " + sunglasses + ".";
+        sushiTextView.setText(content);
     }
 }

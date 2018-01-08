@@ -56,4 +56,12 @@
         android:drawablePadding="15dp"
         android:onClick="onClickSaveBtn"
         />
+    <TextView
+        android:id="@+id/latest_sushi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/button_save"
+        android:layout_marginTop="20dp"
+        />
 </RelativeLayout>
